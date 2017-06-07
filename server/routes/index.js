@@ -14,18 +14,13 @@ const auth = require('../config/middlewares/authorizations');
  * Routes definition
  */
 module.exports = function(app, passport) {
-  require('./auth')(app, passport);
 
   app.use(config.api.base, router);
 
-  // Just to test that api is working
-  router.route('/status')
-  .get(auth.requiresLogin,function(req, res) {
-    res.send('The api is working!');
-  });
-
-  // Portfolio seciton
+  // Set Routes
+  require('./auth')(router, passport);
   require('./architects')(router);
+  require('./projects')(router);
 
   expressListRoutes({ prefix: config.api.base }, 'API routes:', router);
 };

@@ -27,7 +27,7 @@ app.config(function($routeProvider) {
 var checkLoggedin = function($q, $timeout, $http, $location, $rootScope) {
   var deferred = $q.defer();
 
-  $http.get('/loggedin').success(function(user) {
+  $http.get(apiBase + '/loggedin').success(function(user) {
     $rootScope.errorMessage = null;
     //User is Authenticated
     if (user !== '0') {

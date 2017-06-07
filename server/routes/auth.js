@@ -1,44 +1,21 @@
-var db = require("../models");
+'use strict'
+var ctrls = require('../controllers');
 
-module.exports = function(app, passport) {
+module.exports = function(router, passport) {
     // process the login form
-    app.post("/login", passport.authenticate('local-login'), function(req, res) {
-      res.json(req.user);
-    });
+    router.route("/login")
+      .post(passport.authenticate('local-login'), ctrls.auth.login);
 
     // handle logout
-    app.post("/logout", function(req, res) {
-      req.logOut();
-      res.sendStatus(200);
-    })
+    router.route("/logout")
+      .post(ctrls.auth.logout)
 
     // loggedin
-    app.get("/loggedin", function(req, res) {
-      res.send(req.isAuthenticated() ? req.user : '0');
-    });
+    router.route("/loggedin")
+      .get(ctrls.auth.loggedin);
 
     // signup
-    app.post("/signup", function(req, res) {
-      db.User.findOne({
-        username: req.body.username
-      }, function(err, user) {
-        if (user) {
-          res.json(null);
-          return;
-        } else {
-          var newUser = new db.User();
-          newUser.username = req.body.username.toLowerCase();
-          newUser.password = newUser.generateHash(req.body.password);
-          newUser.save(function(err, user) {
-            req.login(user, function(err) {
-              if (err) {
-                return next(err);
-              }
-              res.json(user);
-            });
-          });
-        }
-      });
-    });
+    router.route("/signup")
+      .post(ctrls.auth.signup);
 
 };

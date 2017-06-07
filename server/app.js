@@ -12,7 +12,7 @@ const app = express();
 // Log activated
 app.use(morgan('dev'))
 
-app.use(express.static(join(__dirname , '../client')));
+app.use(express.static(join(__dirname, '../client')));
 //load up Mongo model
 require('./models');
 
@@ -23,8 +23,16 @@ require('./config/passport')(passport); // pass passport for configuration
 //Cookie and session
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
+const MongoStore = require('connect-mongo')(session);
 app.use(session({
-  secret: 'this is the secret'
+  secret: 'Un secret garder par lequipe BAM jusqu a la fin des temps',
+  name: "cookie_bam_bim",
+  store: new MongoStore({
+    url: config.mongo.url,
+    touchAfter: 24 * 3600 // time period in seconds
+  }),
+  resave: false,
+  saveUninitialized: false
 }));
 app.use(cookieParser());
 app.use(passport.initialize());
